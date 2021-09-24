@@ -6,6 +6,8 @@ string LongestWord(string sentence) // declare fn
 {
     int length = strlen(sentence); // store length of sentence for purpose of iteration
     int max = 0; // running maximum to record the number of letters passed over on the current word.
+    int apostrophes = 0;
+    int absapostrophes = 0; // running apostrophe count and apostrophe maxfor words
     int absmax = 0; // updated every time the program hits punctuation or any character other than an apostrophe or a letter.
     int maxID = 0; // ID of the maximum word, gives the place in the sentence to refer back to when necessary.
     for (int i = 0; i < length; i++) // iterate through all characters in sentence
@@ -24,15 +26,29 @@ string LongestWord(string sentence) // declare fn
             if (max > absmax) // if running max is greater than previous max, update the value.
             {
                 absmax = max;
-                maxID = i - absmax; // store ID for the beginning of the word, for later use.
+                absapostrophes = apostrophes;
+                maxID = i - absmax - absapostrophes; // store ID for the beginning of the word, for later use.
             }
-            max = 0; // reset running max to 0.
+            max = 0;
+            apostrophes = 0; // reset running max and apostrophe count to 0.
+        }
+        else
+        {
+            apostrophes++; // increase apostrophe count if apostrophe encountered.
         }
     }
+
+    if (max > absmax) // if running max is greater than previous max, update the value.
+    {
+        absmax = max;
+        absapostrophes = apostrophes;
+        maxID = length - absmax - absapostrophes; // store ID for the beginning of the word, for later use.
+    }
+
     if (absmax != 0) // if there was more than one word, ...
     {
         char out[absmax + 1]; // new char array for output
-        for (int i = maxID; i < (absmax + maxID); i++)
+        for (int i = maxID; i < (absmax + maxID + absapostrophes); i++)
         {
             out[i - maxID] = sentence[i]; // add the longest word to the char array
         }
