@@ -131,35 +131,109 @@ void bubbleSort(int arr[], int len)
     } while (i >= 0 && swapcounter != 0);
 }
 
+int binarySearch(int arr[], int len, int lInd, int rInd, int target, int iterCount)
+{
+    if (iterCount <= len) // to stop the program from getting to segmentation fault.
+    {
+        iterCount++; // count number of times the program had run.
+        mergeSort(arr, 0, len - 1); // sort array
+        int mInd = (lInd + rInd) / 2; // find middle of current array.
+        if (arr[mInd] > target) // if value is to the left of the middle, run binarySearch on the left side.
+        {
+            return binarySearch(arr, mInd - lInd - 1, lInd, mInd, target, iterCount);
+        }
+
+        else if (arr[mInd] < target) // if value is to the right of the middle, run binarySearch on the right side
+        {
+            return binarySearch(arr, rInd - mInd - 1, mInd + 1, rInd, target, iterCount);
+        }
+
+        else // once the midpoint is the target, return it.
+        {
+            return arr[mInd];
+        }
+    }
+
+    else // if the program iterates more than the length of the array, the value isn't in the array. print invalid and return the target value
+    {
+        printf("Invalid\n");
+        return target;
+    }
+}
+
+int linearSearch(int arr[], int len, int target)
+{
+    for (int i = 0; i < len; i++) // simply iterate through the whole array until the desired value is found. Then, return the index of the value.
+    {
+        if (arr[i] == target)
+        {
+            return i;
+        }
+    }
+
+    printf("Invalid\n"); // if nothing is returned by now, the value doesn't exist. Print invalid and return an index of -1.
+    return -1;
+}
+
 int main(void)
 {
     int sortType = 5; // start with a value that is an invalid option
+    int sortSearch = 2;
     int arr[40] = {5,7,0,9,90,98,34,56,21,65,68,1,78,2,45,67,87,6,4,100,32,54,67,98,43,64,87,123,760,321,451,673,34,223,21,322,928,45,12,21}; //given array.
+
     do
     {
-        sortType = get_int("0 for Selection, 1 for Insertion, 2 for Merge, and 3 for Bubble: "); // ask user for what type of sorting algorithm to use
-    } while (sortType < 0 || sortType > 3);
+        sortSearch = get_int("0 for Sort, 1 for Search: ");
+    } while (sortSearch < 0 || sortSearch > 1); // user chooses sort vs search.
 
-    if (sortType == 0)
+    if (sortSearch == 0)
     {
-        selectionSort(arr, 40);
-    }
-    else if (sortType == 1)
-    {
-        insertionSort(arr, 40);
-    }
-    else if (sortType == 2)
-    {
-        mergeSort(arr, 0, 39);
-    }
-    else if (sortType == 3)
-    {
-        bubbleSort(arr, 40); // call appropriate fn based on user input
+        do
+        {
+            sortType = get_int("0 for Selection, 1 for Insertion, 2 for Merge, 3 for Bubble: "); // ask user for what type of sorting algorithm to use
+        } while (sortType < 0 || sortType > 3);
+
+        if (sortType == 0)
+        {
+            selectionSort(arr, 40);
+        }
+        else if (sortType == 1)
+        {
+            insertionSort(arr, 40);
+        }
+        else if (sortType == 2)
+        {
+            mergeSort(arr, 0, 39);
+        }
+        else if (sortType == 3)
+        {
+            bubbleSort(arr, 40); // call appropriate fn based on user input
+        }
+
+        for (int i = 0; i < 40; i++)
+        {
+            printf("%i,", arr[i]); // print final array
+        }
+        printf("\n");
     }
 
-    for (int i = 0; i < 40; i++)
+    else
     {
-        printf("%i,", arr[i]); // print final array
+        do
+        {
+            sortType = get_int("0 for Binary Search, 1 for Linear Search: "); // ask user for what type of search algorithm to use
+        } while (sortType < 0 || sortType > 1);
+
+        if (sortType == 0)
+        {
+            int target = get_int("Enter a target number to find and return value matching it: ");
+            printf("%i\n", binarySearch(arr, 40, 0, 39, target, 0));  // run binary search and return the value, as the index cannot be returned after sorting the array.
+        }
+
+        else
+        {
+            int target = get_int("Enter a target number for its index in the input array: ");
+            printf("%i\n", linearSearch(arr, 40, target)); // run linear search and return the index of the desired value.
+        }
     }
-    printf("\n");
 }
