@@ -73,11 +73,12 @@ def worker2(qual1, qual2, ind):  # this function takes in the values of two card
         for i in range(ind + 1):
             player2.pop(0)
             player1.pop(0)
+
+        return "Player 1 won this round"
     elif qual1 == qual2:
         if len(player1) > ind + 2 and len(player2) > ind + 2:
-            collect(ind + 2)
+            return collect(ind + 2)
         else:
-            print("Lack of cards results in loss")
             if len(player1) > len(player2):
                 player1.extend(player2)
                 player1.extend((player1[:len(player2)]))
@@ -91,6 +92,7 @@ def worker2(qual1, qual2, ind):  # this function takes in the values of two card
                 for i in range(len(player1)):
                     player1.pop(0)
                     player2.pop(0)
+            return "Lack of cards results in loss"
     else:
         player2.extend(player1[:ind + 1])
         player2.extend(player2[:ind + 1])
@@ -98,30 +100,51 @@ def worker2(qual1, qual2, ind):  # this function takes in the values of two card
             player1.pop(0)
             player2.pop(0)
 
+        return "Player 2 won this round"
+
 
 def collect(ind):  # relates the royal cards to the number cards and strips the suit. Uses worker2 to compare and do
     # list operations
     global royals, player1, player2
     if player1[ind][:-3] not in royals and player2[ind][:-3] not in royals:
-        worker2(int(player1[ind][:-3]), int(player2[ind][:-3]), ind)
+        return worker2(int(player1[ind][:-3]), int(player2[ind][:-3]), ind)
     elif player1[ind][:-3] in royals and player2[ind][:-3] in royals:
-        worker2(royals.index(player1[ind][:-3]), royals.index(player2[ind][:-3]), ind)
+        return worker2(royals.index(player1[ind][:-3]), royals.index(player2[ind][:-3]), ind)
     elif player1[ind][:-3] in royals:
         worker2(royals.index(player1[ind][:-3]) + 11, int(player2[ind][:-3]), ind)
+        return "Player 1 won this round"
     else:
         worker2(int(player1[ind][:-3]), royals.index(player2[ind][:-3]) + 11, ind)
+        return "Player 2 won this round"
 
 
-count = 0
-while len(player1) and len(player2):
-    collect(0)
-    print("player1 ", player1)  # run the simulation until end is reached
-    print("player2 ", player2)
-    print()
-    count += 1
+score1 = 0
+score2 = 0
+while True:
+    count = 0
+    while len(player1) and len(player2):
+        print("Round " + str(count))
+        print(collect(0))
+        print("player1 ", player1)  # run the simulation until end is reached
+        print("player2 ", player2)
+        print()
+        count += 1
 
-if len(player2):
-    print("Player 2 won in " + str(count) + " turns!")  # print the winner and number of turns it took
+    if len(player2):
+        player2 = []
+        print("Player 2 won in " + str(count) + " turns!")  # print the winner and number of turns it took
+        score2 += 1
 
-else:
-    print("Player 1 won in " + str(count) + " turns!")
+    else:
+        player1 = []
+        print("Player 1 won in " + str(count) + " turns!")
+        score1 += 1
+
+    print("Player 1 score: " + str(score1))
+    print("Player 2 score: " + str(score2))
+
+    if input("Play again? y/n") == "n":
+        break
+
+    else:
+        playerCards()
